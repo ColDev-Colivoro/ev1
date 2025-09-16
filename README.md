@@ -65,8 +65,9 @@ Sigue estos pasos para configurar y ejecutar el proyecto localmente:
     python proyectotaller/manage.py runserver
     ```
 
-8.  **Acceder a la interfaz web (CRUD completo):**
-    Abre tu navegador y visita:
+8.  **Acceder a la Interfaz de Usuario Web (CRUD Completo):**
+ 
+    Abre tu navegador y visita `http://127.0.0.1:8000/` para acceder a la página de inicio del proyecto. Desde allí, puedes navegar a las siguientes secciones para la gestión CRUD completa:
     *   `http://127.0.0.1:8000/gestion/clientes/` para gestionar Clientes.
     *   `http://127.0.0.1:8000/gestion/vehiculos/` para gestionar Vehículos.
     *   `http://127.0.0.1:8000/gestion/servicios/` para gestionar Servicios.
