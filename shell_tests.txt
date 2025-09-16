@@ -1,0 +1,32 @@
+# Registro de comandos y resultados de la Django Shell
+
+# Importar modelos
+from gestion.models import Cliente, Vehiculo, Servicio, OrdenReparacion
+from datetime import date, timedelta
+import random
+
+# --- Generación de Datos de Prueba (10 entradas) ---
+# Los datos de prueba se generan utilizando el comando de gestión:
+# python proyectotaller/manage.py generate_data
+
+# --- Ejecución de Consultas ---
+
+# 1. Vehículos de un cliente (ej. Cliente1)
+# Comando: Cliente.objects.get(nombre='Cliente1').vehiculos.all()
+# Resultado: <QuerySet [<Vehiculo: Nissan Versa (PAT0100)>]> (ejemplo, puede variar)
+
+# 2. Órdenes de un vehículo (ej. PAT0100)
+# Comando: Vehiculo.objects.get(patente='PAT0100').ordenes_reparacion.all()
+# Resultado: <QuerySet [<OrdenReparacion: Orden N°4 - PAT0100 - ingresado>, <OrdenReparacion: Orden N°5 - PAT0100 - en_progreso>]> (ejemplo, puede variar)
+
+# 3. Servicios asociados a una orden (ej. Orden N°1)
+# Comando: OrdenReparacion.objects.get(id=1).servicios.all()
+# Resultado: <QuerySet [<Servicio: Alineación ($45.00)>]> (ejemplo, puede variar)
+
+# 4. Órdenes en progreso (estado="en_progreso")
+# Comando: OrdenReparacion.objects.filter(estado='en_progreso')
+# Resultado: <QuerySet [<OrdenReparacion: Orden N°1 - PAT1000 - en_progreso>, <OrdenReparacion: Orden N°2 - PAT0300 - en_progreso>, <OrdenReparacion: Orden N°5 - PAT0100 - en_progreso>, <OrdenReparacion: Orden N°7 - PAT0500 - en_progreso>, <OrdenReparacion: Orden N°8 - PAT0300 - en_progreso>, <OrdenReparacion: Orden N°10 - PAT1000 - en_progreso>]> (ejemplo, puede variar)
+
+# 5. Órdenes sin fecha_salida
+# Comando: OrdenReparacion.objects.filter(fecha_salida__isnull=True)
+# Resultado: <QuerySet [<OrdenReparacion: Orden N°1 - PAT1000 - en_progreso>, <OrdenReparacion: Orden N°2 - PAT0300 - en_progreso>, <OrdenReparacion: Orden N°3 - PAT0800 - ingresado>, <OrdenReparacion: Orden N°4 - PAT0100 - ingresado>, <OrdenReparacion: Orden N°5 - PAT0100 - en_progreso>, <OrdenReparacion: Orden N°7 - PAT0500 - en_progreso>, <OrdenReparacion: Orden N°8 - PAT0300 - en_progreso>, <OrdenReparacion: Orden N°10 - PAT1000 - en_progreso>]> (ejemplo, puede variar)
