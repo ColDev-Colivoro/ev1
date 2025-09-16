@@ -1,0 +1,16 @@
+{% extends 'gestion/base.html' %}
+
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+    <h1>{{ titulo }}</h1>
+    <div class="confirmation-box">
+        <p>¿Estás seguro de que quieres eliminar el servicio "{{ servicio.nombre }}" con precio ${{ servicio.precio }}?</p>
+        <p>Esta acción es irreversible.</p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Confirmar Eliminación</button>
+            <a href="{% url 'servicio_list' %}" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+{% endblock %}

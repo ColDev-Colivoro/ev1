@@ -1,0 +1,16 @@
+{% extends 'gestion/base.html' %}
+
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+    <div style="text-align: center;">
+        <h1>{{ titulo }}</h1>
+        <p>Bienvenido al sistema de gestión de BioBio Motors. Utiliza los enlaces a continuación para navegar por las diferentes secciones.</p>
+        <div class="nav-links">
+            <a href="{% url 'cliente_list' %}" class="btn">Gestionar Clientes</a>
+            <a href="{% url 'vehiculo_list' %}" class="btn">Gestionar Vehículos</a>
+            <a href="{% url 'servicio_list' %}" class="btn">Gestionar Servicios</a>
+            <a href="{% url 'orden_reparacion_list' %}" class="btn">Gestionar Órdenes de Reparación</a>
+        </div>
+    </div>
+{% endblock %}

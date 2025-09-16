@@ -1,0 +1,37 @@
+{% extends 'gestion/base.html' %}
+{% load humanize %}
+
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+    <h1>{{ titulo }}</h1>
+    <p><a href="{% url 'servicio_create' %}" class="btn btn-success">Crear Nuevo Servicio</a></p>
+
+    {% if servicios %}
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Precio (CLP)</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for servicio in servicios %}
+                <tr>
+                    <td>{{ servicio.id }}</td>
+                    <td>{{ servicio.nombre }}</td>
+                    <td>${{ servicio.precio|intcomma }}</td>
+                    <td class="actions">
+                        <a href="{% url 'servicio_update' servicio.pk %}" class="btn btn-warning">Editar</a>
+                        <a href="{% url 'servicio_delete' servicio.pk %}" class="btn btn-danger">Eliminar</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No hay servicios registrados.</p>
+    {% endif %}
+{% endblock %}

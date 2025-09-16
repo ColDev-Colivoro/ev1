@@ -1,0 +1,16 @@
+{% extends 'gestion/base.html' %}
+
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+    <h1>{{ titulo }}</h1>
+    <div class="confirmation-box">
+        <p>¿Estás seguro de que quieres eliminar el vehículo "{{ vehiculo.marca }} {{ vehiculo.modelo }} ({{ vehiculo.patente }})" del cliente "{{ vehiculo.cliente.nombre }} {{ vehiculo.cliente.apellido }}"?</p>
+        <p>Esta acción es irreversible y también eliminará todas las órdenes de reparación asociadas a este vehículo.</p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Confirmar Eliminación</button>
+            <a href="{% url 'vehiculo_list' %}" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+{% endblock %}

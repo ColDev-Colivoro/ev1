@@ -1,0 +1,16 @@
+{% extends 'gestion/base.html' %}
+
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+    <h1>{{ titulo }}</h1>
+    <div class="confirmation-box">
+        <p>¿Estás seguro de que quieres eliminar al cliente "{{ cliente.nombre }} {{ cliente.apellido }}"?</p>
+        <p>Esta acción es irreversible y también eliminará todos los vehículos y órdenes de reparación asociados a este cliente.</p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Confirmar Eliminación</button>
+            <a href="{% url 'cliente_list' %}" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+{% endblock %}

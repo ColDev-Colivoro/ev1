@@ -1,0 +1,53 @@
+{% extends 'gestion/base.html' %}
+{% load humanize %}
+
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+    <h1>{{ titulo }}</h1>
+    <p><a href="{% url 'orden_reparacion_create' %}" class="btn btn-success">Crear Nueva Orden de Reparación</a></p>
+
+    {% if ordenes %}
+        <table>
+            <thead>
+                <tr>
+                    <th>ID Orden</th>
+                    <th>Vehículo</th>
+                    <th>Cliente</th>
+                    <th>Servicios</th>
+                    <th>Fecha Ingreso</th>
+                    <th>Fecha Salida</th>
+                    <th>Estado</th>
+                    <th>Monto Total (CLP)</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for orden in ordenes %}
+                <tr>
+                    <td>{{ orden.id }}</td>
+                    <td>{{ orden.vehiculo.marca }} {{ orden.vehiculo.modelo }} ({{ orden.vehiculo.patente }})</td>
+                    <td>{{ orden.vehiculo.cliente.nombre }} {{ orden.vehiculo.cliente.apellido }}</td>
+                    <td>
+                        {% for servicio in orden.servicios.all %}
+                            {{ servicio.nombre }} (${{ servicio.precio|intcomma }}){% if not forloop.last %}, {% endif %}
+                        {% empty %}
+                            No hay servicios asociados.
+                        {% endfor %}
+                    </td>
+                    <td>{{ orden.fecha_ingreso }}</td>
+                    <td>{{ orden.fecha_salida|default:"N/A" }}</td>
+                    <td><span class="estado-{{ orden.estado }}">{{ orden.get_estado_display }}</span></td>
+                    <td>${{ orden.monto_total|intcomma }}</td>
+                    <td class="actions">
+                        <a href="{% url 'orden_reparacion_update' orden.pk %}" class="btn btn-warning">Editar</a>
+                        <a href="{% url 'orden_reparacion_delete' orden.pk %}" class="btn btn-danger">Eliminar</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No hay órdenes de reparación registradas.</p>
+    {% endif %}
+{% endblock %}

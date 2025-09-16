@@ -1,0 +1,42 @@
+{% extends 'gestion/base.html' %}
+
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+    <h1>{{ titulo }}</h1>
+    <p><a href="{% url 'vehiculo_create' %}" class="btn btn-success">Crear Nuevo Vehículo</a></p>
+
+    {% if vehiculos %}
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Patente</th>
+                    <th>Marca</th>
+                    <th>Modelo</th>
+                    <th>Año</th>
+                    <th>Cliente</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for vehiculo in vehiculos %}
+                <tr>
+                    <td>{{ vehiculo.id }}</td>
+                    <td>{{ vehiculo.patente }}</td>
+                    <td>{{ vehiculo.marca }}</td>
+                    <td>{{ vehiculo.modelo }}</td>
+                    <td>{{ vehiculo.año }}</td>
+                    <td>{{ vehiculo.cliente.nombre }} {{ vehiculo.cliente.apellido }}</td>
+                    <td class="actions">
+                        <a href="{% url 'vehiculo_update' vehiculo.pk %}" class="btn btn-warning">Editar</a>
+                        <a href="{% url 'vehiculo_delete' vehiculo.pk %}" class="btn btn-danger">Eliminar</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No hay vehículos registrados.</p>
+    {% endif %}
+{% endblock %}
