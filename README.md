@@ -239,6 +239,22 @@ print(f"Cliente eliminado: {cliente_a_eliminar}")
 
 Puedes tener el servidor de desarrollo de Django ejecutándose en una terminal y abrir una **segunda terminal** en VS Code para interactuar con el ORM directamente a través de la Django Shell. Los cambios realizados en la shell se reflejarán en la interfaz web (y viceversa) ya que ambos interactúan con la misma base de datos.
 
+## Pruebas Unitarias
+
+Se han implementado pruebas unitarias exhaustivas para los modelos de la aplicación `gestion` (`Cliente`, `Vehiculo`, `Servicio`, `OrdenReparacion`). Estas pruebas aseguran la correcta funcionalidad de las operaciones CRUD, las relaciones entre modelos y la lógica de negocio (como el cálculo del monto total de una orden).
+
+**Ubicación de las pruebas:**
+Las pruebas se encuentran en `proyectotaller/gestion/tests.py`.
+
+**Ejecución de las pruebas:**
+Para ejecutar todas las pruebas de la aplicación `gestion`, utiliza el siguiente comando en tu terminal (asegúrate de tener activado tu entorno virtual):
+
+```bash
+python proyectotaller/manage.py test gestion
+```
+
+Los resultados de la ejecución indicarán si todas las pruebas pasaron (`OK`) o si hubo fallos.
+
 ## Estructura del Proyecto
 
 ![Diagrama de la raíz](diagrama%20django%20ev1.png)
