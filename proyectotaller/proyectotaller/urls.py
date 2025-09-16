@@ -25,4 +25,6 @@ urlpatterns = [
     path('gestion/', include('gestion.urls')),
     # Mapea la URL raíz del proyecto a la vista 'home' de la aplicación 'gestion'.
     path('', views.home, name='home'),
+    # URL para django-browser-reload
+    path("__reload__/", include("django_browser_reload.urls")),
 ]

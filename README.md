@@ -227,6 +227,8 @@ Puedes tener el servidor de desarrollo de Django ejecutándose en una terminal y
 
 ## Estructura del Proyecto
 
+![Diagrama de la raíz](diagrama%20django%20ev1.png)
+
 ```
 .
 ├── proyectotaller/

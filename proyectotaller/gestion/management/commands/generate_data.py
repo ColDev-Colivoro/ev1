@@ -4,6 +4,7 @@
 # lo cual es útil para pruebas y desarrollo.
 
 from django.core.management.base import BaseCommand
+from django.db import connection # Importar connection para resetear secuencias
 from gestion.models import Cliente, Vehiculo, Servicio, OrdenReparacion
 from datetime import date, timedelta
 import random
@@ -14,17 +15,51 @@ class Command(BaseCommand):
     """
     help = 'Genera 10 entradas de datos de ejemplo para los modelos Cliente, Vehiculo, Servicio y OrdenReparacion.'
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--mode',
+            type=str,
+            choices=['reset', 'append'],
+            default=None, # Change default to None to trigger interactive prompt
+            help='Define el modo de generación de datos: "reset" para eliminar y generar desde 0, "append" para añadir 10 más.'
+        )
+
     def handle(self, *args, **kwargs):
         """
         Lógica principal del comando para generar datos.
         """
-        self.stdout.write(self.style.SUCCESS('Eliminando datos existentes...'))
-        # Elimina todos los registros existentes de cada modelo para asegurar un estado limpio.
-        Cliente.objects.all().delete()
-        Vehiculo.objects.all().delete()
-        Servicio.objects.all().delete()
-        OrdenReparacion.objects.all().delete()
-        self.stdout.write(self.style.SUCCESS('Datos existentes eliminados.'))
+        mode = kwargs['mode']
+
+        if mode is None: # If mode is not provided via argument, ask the user
+            self.stdout.write(self.style.WARNING('No se especificó el modo de generación de datos.'))
+            while True:
+                choice = input("¿Desea agregar 10 más (append) o 10 desde 0 (reset)? (append/reset): ").lower()
+                if choice in ['append', 'reset']:
+                    mode = choice
+                    break
+                else:
+                    self.stdout.write(self.style.ERROR('Opción inválida. Por favor, escriba "append" o "reset".'))
+
+        if mode == 'reset':
+            self.stdout.write(self.style.SUCCESS('Eliminando datos existentes...'))
+            # Elimina todos los registros existentes de cada modelo para asegurar un estado limpio.
+            Cliente.objects.all().delete()
+            Vehiculo.objects.all().delete()
+            Servicio.objects.all().delete()
+            OrdenReparacion.objects.all().delete()
+            self.stdout.write(self.style.SUCCESS('Datos existentes eliminados.'))
+
+            self.stdout.write(self.style.SUCCESS('Reseteando secuencias de IDs...'))
+            with connection.cursor() as cursor:
+                for model in [Cliente, Vehiculo, Servicio, OrdenReparacion]:
+                    table_name = model._meta.db_table
+                    cursor.execute(f"UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='{table_name}';")
+            self.stdout.write(self.style.SUCCESS('Secuencias de IDs reseteadas.'))
+        elif mode == 'append':
+            self.stdout.write(self.style.SUCCESS('Añadiendo 10 nuevos registros a los datos existentes...'))
+        
+        # El resto del código de generación de datos se mantiene igual,
+        # ya que siempre generará 10 nuevos registros.
 
         self.stdout.write(self.style.SUCCESS('Generando 10 clientes y 10 vehículos...'))
         clientes = []
@@ -38,8 +73,10 @@ class Command(BaseCommand):
                 email=f'cliente{i}@example.com' if i % 2 == 0 else None # Email opcional
             )
             clientes.append(cliente)
+            # Generar patente única para evitar conflictos en modo 'append'
+            unique_patente = f'PAT{random.randint(10000, 99999)}{i:02d}'
             vehiculo = Vehiculo.objects.create(
-                patente=f'PAT{i:02d}00',
+                patente=unique_patente,
                 marca=random.choice(['Toyota', 'Nissan', 'Ford', 'Chevrolet', 'BMW']),
                 modelo=random.choice(['Corolla', 'Versa', 'Focus', 'Cruze', 'X5']),
                 año=random.randint(2010, 2023),
@@ -60,8 +97,10 @@ class Command(BaseCommand):
 
         # Bucle para crear 10 servicios con nombres y precios predefinidos.
         for i in range(10):
+            # Generar nombre de servicio único para evitar conflictos en modo 'append'
+            unique_service_name = f'{nombres_servicios[i]} {random.randint(1000, 9999)}'
             servicio = Servicio.objects.create(
-                nombre=nombres_servicios[i],
+                nombre=unique_service_name,
                 precio=precios_servicios[i]
             )
             servicios.append(servicio)
