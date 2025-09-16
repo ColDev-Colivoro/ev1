@@ -253,7 +253,7 @@ Puedes tener el servidor de desarrollo de Django ejecutándose en una terminal y
 │   │   ├── migrations/
 │   │   ├── templates/
 │   │   │   └── gestion/
-│   │   │       ├── base.html (Plantilla base extendida por todas las demás)
+│   │   │       ├── base.html 
 │   │   │       ├── home.html
 │   │   │       ├── cliente_list.html
 │   │   │       ├── cliente_form.html
