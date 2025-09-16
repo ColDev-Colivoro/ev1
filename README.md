@@ -2,6 +2,8 @@
 
 Este proyecto implementa un sistema de gestión para un taller automotriz utilizando Django, siguiendo los requisitos de la Evaluación N°1 de Programación Back End (TI3041).
 
+**Repositorio:** [https://github.com/ColDev-Colivoro/ev1.git](https://github.com/ColDev-Colivoro/ev1.git)
+
 ## Modelos Implementados
 
 Se han definido los siguientes modelos ORM:
@@ -17,10 +19,9 @@ Sigue estos pasos para configurar y ejecutar el proyecto localmente:
 
 1.  **Clonar el repositorio:**
     ```bash
-    git clone <URL_DEL_REPOSITORIO>
-    cd proyectotaller
+    git clone https://github.com/ColDev-Colivoro/ev1.git
+    cd ev1
     ```
-    (Nota: Reemplaza `<URL_DEL_REPOSITORIO>` con la URL real de tu repositorio de GitHub).
 
 2.  **Crear y activar un entorno virtual (opcional pero recomendado):**
     ```bash
@@ -56,7 +57,7 @@ Sigue estos pasos para configurar y ejecutar el proyecto localmente:
     O puedes ejecutar los comandos directamente desde la línea de comandos:
     ```bash
     # Ejemplo de consulta (todos los comandos están en shell_tests.txt)
-    python proyectotaller/manage.py shell --command "from gestion.models import Cliente; print(Cliente.objects.get(nombre='Cliente1').vehiculos.all())"
+    python proyectotaller/manage.py shell --command "from gestion.models import Cliente; print(Cliente.objects.get(nombre='''Cliente1''').vehiculos.all())"
     ```
 
 7.  **Iniciar el servidor de desarrollo:**
@@ -71,6 +72,153 @@ Sigue estos pasos para configurar y ejecutar el proyecto localmente:
     *   `http://127.0.0.1:8000/gestion/servicios/` para gestionar Servicios.
     *   `http://127.0.0.1:8000/gestion/ordenes/` para gestionar Órdenes de Reparación.
 
+
+## Uso del ORM de Django
+
+Este apartado proporciona una guía sobre cómo interactuar con los modelos ORM de Django definidos para el sistema.
+
+### Acceso a la Django Shell
+
+Para interactuar con el ORM, abre la Django Shell desde la raíz de tu proyecto (donde se encuentra `manage.py`):
+
+```bash
+python proyectotaller/manage.py shell
+```
+
+Una vez dentro de la shell, puedes importar tus modelos:
+
+```python
+from gestion.models import Cliente, Vehiculo, Servicio, OrdenReparacion
+from datetime import date, timedelta
+```
+
+### Operaciones CRUD Básicas
+
+#### 1. Crear Registros
+
+```python
+# Crear un Cliente
+cliente_nuevo = Cliente.objects.create(
+    nombre='''Carlos''',
+    apellido='''Ruiz''',
+    telefono='''998877665''',
+    email='''carlos.ruiz@example.com'''
+)
+print(f"Cliente creado: {cliente_nuevo}")
+
+# Crear un Vehiculo para el cliente_nuevo
+vehiculo_nuevo = Vehiculo.objects.create(
+    patente='''XYZ789''',
+    marca='''Honda''',
+    modelo='''Civic''',
+    año=2022,
+    cliente=cliente_nuevo
+)
+print(f"Vehículo creado: {vehiculo_nuevo}")
+
+# Crear un Servicio
+servicio_nuevo = Servicio.objects.create(
+    nombre='''Cambio de Bujías''',
+    precio=75.00
+)
+print(f"Servicio creado: {servicio_nuevo}")
+
+# Crear una Orden de Reparacion
+orden_nueva = OrdenReparacion.objects.create(
+    vehiculo=vehiculo_nuevo,
+    fecha_ingreso=date.today(),
+    estado='''ingresado'''
+)
+# Añadir servicios a la orden (relación ManyToMany)
+orden_nueva.servicios.add(servicio_nuevo)
+# Si hay más servicios, puedes añadirlos así:
+# otro_servicio = Servicio.objects.get(nombre='''Cambio de Aceite''')
+# orden_nueva.servicios.add(otro_servicio)
+
+# Calcular y guardar el monto total de la orden
+orden_nueva.calcular_monto_total()
+print(f"Orden de Reparación creada: {orden_nueva}")
+```
+
+#### 2. Leer Registros
+
+```python
+# Obtener todos los clientes
+todos_clientes = Cliente.objects.all()
+for c in todos_clientes:
+    print(c)
+
+# Obtener un cliente por su ID
+cliente_por_id = Cliente.objects.get(id=1)
+print(f"Cliente por ID: {cliente_por_id}")
+
+# Obtener un vehículo por su patente
+vehiculo_por_patente = Vehiculo.objects.get(patente='''PAT0100''')
+print(f"Vehículo por patente: {vehiculo_por_patente}")
+
+# Filtrar órdenes por estado
+ordenes_en_progreso = OrdenReparacion.objects.filter(estado='''en_progreso''')
+for o in ordenes_en_progreso:
+    print(o)
+
+# Filtrar órdenes sin fecha de salida
+ordenes_sin_salida = OrdenReparacion.objects.filter(fecha_salida__isnull=True)
+for o in ordenes_sin_salida:
+    print(o)
+
+# Acceder a relaciones inversas (related_name)
+# Vehículos de un cliente
+cliente_ejemplo = Cliente.objects.get(nombre='''Cliente1''')
+vehiculos_cliente = cliente_ejemplo.vehiculos.all()
+print(f"Vehículos de {cliente_ejemplo.nombre}: {vehiculos_cliente}")
+
+# Órdenes de un vehículo
+vehiculo_ejemplo = Vehiculo.objects.get(patente='''PAT0100''')
+ordenes_vehiculo = vehiculo_ejemplo.ordenes_reparacion.all()
+print(f"Órdenes de {vehiculo_ejemplo.patente}: {ordenes_vehiculo}")
+
+# Servicios asociados a una orden
+orden_ejemplo = OrdenReparacion.objects.get(id=1)
+servicios_orden = orden_ejemplo.servicios.all()
+print(f"Servicios de la orden {orden_ejemplo.id}: {servicios_orden}")
+```
+
+#### 3. Actualizar Registros
+
+```python
+# Actualizar el teléfono de un cliente
+cliente_a_actualizar = Cliente.objects.get(nombre='''Carlos''')
+cliente_a_actualizar.telefono = '''999111222'''
+cliente_a_actualizar.save()
+print(f"Cliente actualizado: {cliente_a_actualizar}")
+
+# Actualizar el estado y fecha de salida de una orden
+orden_a_finalizar = OrdenReparacion.objects.get(id=orden_nueva.id)
+orden_a_finalizar.estado = '''finalizado'''
+orden_a_finalizar.fecha_salida = date.today() + timedelta(days=2)
+orden_a_finalizar.save()
+print(f"Orden finalizada: {orden_a_finalizar}")
+```
+
+#### 4. Eliminar Registros
+
+```python
+# Eliminar un servicio
+servicio_a_eliminar = Servicio.objects.get(nombre='''Cambio de Bujías''')
+servicio_a_eliminar.delete()
+print(f"Servicio eliminado: {servicio_a_eliminar}")
+
+# Eliminar un cliente (esto también eliminará sus vehículos y órdenes asociadas debido a CASCADE)
+cliente_a_eliminar = Cliente.objects.get(nombre='''Carlos''')
+cliente_a_eliminar.delete()
+print(f"Cliente eliminado: {cliente_a_eliminar}")
+```
+
+### Consideraciones Adicionales
+
+*   **`calcular_monto_total()`**: Recuerda llamar a `orden.calcular_monto_total()` después de añadir o quitar servicios a una `OrdenReparacion` para actualizar el `monto_total`.
+*   **`related_name`**: Se han utilizado `related_name` en las relaciones `ForeignKey` y `ManyToManyField` para facilitar el acceso inverso desde los modelos relacionados (ej. `cliente.vehiculos.all()`).
+*   **`get_estado_display()`**: Para obtener la representación legible del campo `estado` de `OrdenReparacion`, usa `orden.get_estado_display()`.
 
 ## Uso Simultáneo de la Terminal y la Interfaz Web
 
@@ -117,8 +265,7 @@ Puedes tener el servidor de desarrollo de Django ejecutándose en una terminal y
 │   │   ├── urls.py
 │   │   └── wsgi.py
 │   └── manage.py
-├── ORM_usage_instructions.txt
 ├── requirements.txt
 ├── shell_tests.txt
-├── TI3041 - Ev 1.pdf
 └── README.md
+```
