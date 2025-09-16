@@ -49,16 +49,30 @@ Sigue estos pasos para configurar y ejecutar el proyecto localmente:
     ```
 
 6.  **Ejecutar y registrar consultas en la Django Shell:**
-    Los comandos para las consultas requeridas, junto con sus resultados, se encuentran en el archivo `shell_tests.txt`. Puedes ejecutar estos comandos en la shell de Django:
-    ```bash
-    python proyectotaller/manage.py shell
-    # Luego, copia y pega los comandos de shell_tests.txt uno por uno.
-    ```
-    O puedes ejecutar los comandos directamente desde la línea de comandos:
-    ```bash
-    # Ejemplo de consulta (todos los comandos están en shell_tests.txt)
-    python proyectotaller/manage.py shell --command "from gestion.models import Cliente; print(Cliente.objects.get(nombre='''Cliente1''').vehiculos.all())"
-    ```
+    Este paso se enfoca en la interacción directa con el ORM de Django a nivel de backend. Los comandos para las consultas requeridas, junto con sus resultados, se encuentran en el archivo `shell_tests.txt`. Para ejecutarlos, tienes dos opciones:
+
+    *   **Opción 1: Interactivamente en la Django Shell**
+        1.  Abre la shell de Django:
+            ```bash
+            python proyectotaller/manage.py shell
+            ```
+        2.  Una vez dentro de la shell (verás `>>>`), primero copia y pega las líneas de importación de `shell_tests.txt`:
+            ```python
+            from gestion.models import Cliente, Vehiculo, Servicio, OrdenReparacion
+            from datetime import date, timedelta
+            import random
+            ```
+        3.  Luego, copia y pega cada comando de consulta de `shell_tests.txt` uno por uno.
+        4.  Para salir de la shell, escribe `exit()` y presiona Enter.
+
+    *   **Opción 2: Directamente desde la línea de comandos (para cada consulta individual)**
+        Puedes ejecutar cada comando de consulta directamente desde tu terminal, encapsulándolo con `python proyectotaller/manage.py shell --command "..."`. Por ejemplo:
+        ```bash
+        python proyectotaller/manage.py shell --command "from gestion.models import Cliente; print(Cliente.objects.get(nombre='''Cliente1''').vehiculos.all())"
+        ```
+        (Todos los comandos de ejemplo están en `shell_tests.txt` y deben ejecutarse de esta manera si eliges esta opción).
+
+    **Nota:** Después de ejecutar comandos en la Django Shell, puedes iniciar el servidor de desarrollo (Paso 7) y acceder a la interfaz web (Paso 8) para verificar visualmente los cambios realizados en la base de datos.
 
 7.  **Iniciar el servidor de desarrollo:**
     ```bash
@@ -120,7 +134,7 @@ print(f"Vehículo creado: {vehiculo_nuevo}")
 # Crear un Servicio
 servicio_nuevo = Servicio.objects.create(
     nombre='''Cambio de Bujías''',
-    precio=75.00
+    precio=7500
 )
 print(f"Servicio creado: {servicio_nuevo}")
 
